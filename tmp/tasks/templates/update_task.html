@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task</title>
+    {% load static %}
+    <script src="{% static 'js/update_task.js' %}"></script>
+
+</head>
+<body>
+    <h1>Update Task</h1>
+    <form id="updateTaskForm">
+        {% csrf_token %}
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value="{{ task.title }}"><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description">{{ task.description }}</textarea><br>
+        <label for="priority">Priority:</label><br>
+        <select id="priority" name="priority">
+            <option value="High" {% if task.priority == "High" %}selected{% endif %}>High</option>
+            <option value="Medium" {% if task.priority == "Medium" %}selected{% endif %}>Medium</option>
+            <option value="Low" {% if task.priority == "Low" %}selected{% endif %}>Low</option>
+        </select><br>
+        <label for="status">Status:</label><br>
+        <select id="status" name="status">
+            <option value="Pending" {% if task.status == "Pending" %}selected{% endif %}>Pending</option>
+            <option value="In Progress" {% if task.status == "In Progress" %}selected{% endif %}>In Progress</option>
+            <option value="Completed" {% if task.status == "Completed" %}selected{% endif %}>Completed</option>
+        </select><br>
+        <button type="submit">Update Task</button>
+    </form>
+
+    <script>
+        document.getElementById('updateTaskForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            fetch('/tasks/{{ task.id }}/', {
+                method: 'PUT',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Task updated successfully');
+                    // Redirect to task detail page or update UI as needed
+                } else {
+                    alert('Error updating task');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
